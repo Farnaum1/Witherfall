@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public Rigidbody2D rb;
+    public Animator animator;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
@@ -64,7 +65,12 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(horizontalMovement * moveSpeed, rb.velocity.y);
             SetFlip();
         }
-        
+
+        // Update animator parameters
+        animator.SetFloat("yVelocity", rb.velocity.y);
+        animator.SetFloat("magnitude", rb.velocity.magnitude);
+        animator.SetBool("isWallSliding", isWallSliding);
+
     }
 
     private void FixedUpdate()
@@ -99,12 +105,14 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpsRemaining--;
+            animator.SetTrigger("jump");
         }
         // Reduce jump height when button released, if moving upwards
         else if (context.canceled && rb.velocity.y > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             jumpsRemaining--;
+            animator.SetTrigger("jump");
         }
 
         if (context.performed && wallJumpTimer > 0)
@@ -114,8 +122,9 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(wallJumpDirection * wallJumpForce.x, wallJumpForce.y);
             wallJumpTimer = 0f; // Reset wall jump timer
             Invoke(nameof(CancelWallJump), wallJumpDuration + 0.1f); // Cancel wall jump after a short delay
+            animator.SetTrigger("jump");
 
-            if(transform.localScale.x != wallJumpDirection)
+            if (transform.localScale.x != wallJumpDirection)
             {
                 // force flip if wall jump direction is opposite to facing direction
                 isFacingRight = !isFacingRight;
