@@ -8,6 +8,8 @@ public class PlayerMovement : MonoBehaviour
 {
     public Rigidbody2D rb;
     public Animator animator;
+    public ParticleSystem dustBurstFX;
+    public ParticleSystem JumpFX;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
@@ -59,6 +61,15 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Update animator parameters
+        animator.SetFloat("yVelocity", rb.velocity.y);
+        animator.SetFloat("magnitude", rb.velocity.magnitude);
+        animator.SetBool("isWallSliding", isWallSliding);
+    }
+
+    private void FixedUpdate()
+    {
+
         if (!isWallJumping)
         {
             // Apply horizontal movement
@@ -66,15 +77,6 @@ public class PlayerMovement : MonoBehaviour
             SetFlip();
         }
 
-        // Update animator parameters
-        animator.SetFloat("yVelocity", rb.velocity.y);
-        animator.SetFloat("magnitude", rb.velocity.magnitude);
-        animator.SetBool("isWallSliding", isWallSliding);
-
-    }
-
-    private void FixedUpdate()
-    {
         GroundCheck();
         SetGravity();
         WallCheck();
@@ -106,6 +108,11 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpsRemaining--;
             animator.SetTrigger("jump");
+
+            if (jumpsRemaining == 0)
+            {
+                JumpFX.Play();
+            }
         }
         // Reduce jump height when button released, if moving upwards
         else if (context.canceled && rb.velocity.y > 0)
@@ -113,6 +120,12 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             jumpsRemaining--;
             animator.SetTrigger("jump");
+
+            if (jumpsRemaining == 0)
+            {
+                JumpFX.Play();
+            }
+            
         }
 
         if (context.performed && wallJumpTimer > 0)
@@ -123,6 +136,7 @@ public class PlayerMovement : MonoBehaviour
             wallJumpTimer = 0f; // Reset wall jump timer
             Invoke(nameof(CancelWallJump), wallJumpDuration + 0.1f); // Cancel wall jump after a short delay
             animator.SetTrigger("jump");
+            dustBurstFX.Play();
 
             if (transform.localScale.x != wallJumpDirection)
             {
@@ -131,6 +145,7 @@ public class PlayerMovement : MonoBehaviour
                 Vector2 localScale = transform.localScale;
                 localScale.x *= -1f;
                 transform.localScale = localScale;
+                dustBurstFX.Play();
             }
         }
 
@@ -169,7 +184,12 @@ public class PlayerMovement : MonoBehaviour
             Vector2 localScale = transform.localScale;
             localScale.x *= -1f;
             transform.localScale = localScale;
+            if (isGrounded)
+            {
+                dustBurstFX.Play();
+            }
         }
+                
     }
 
     private void SetGravity()
