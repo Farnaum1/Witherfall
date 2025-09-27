@@ -61,10 +61,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // Update animator parameters
-        animator.SetFloat("yVelocity", rb.velocity.y);
-        animator.SetFloat("magnitude", rb.velocity.magnitude);
-        animator.SetBool("isWallSliding", isWallSliding);
+      
     }
 
     private void FixedUpdate()
@@ -82,6 +79,11 @@ public class PlayerMovement : MonoBehaviour
         WallCheck();
         SetWallSlide();
         SetWallJump();
+
+        // Update animator parameters
+        animator.SetFloat("yVelocity", rb.velocity.y);
+        animator.SetFloat("magnitude", rb.velocity.magnitude);
+        animator.SetBool("isWallSliding", isWallSliding);
     }
 
     private void OnDrawGizmosSelected()
@@ -239,6 +241,18 @@ public class PlayerMovement : MonoBehaviour
     private void CancelWallJump()
     {
         isWallJumping = false;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Ground"))
+            transform.parent = collision.transform;
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Ground"))
+            transform.parent = null;
     }
 
 
