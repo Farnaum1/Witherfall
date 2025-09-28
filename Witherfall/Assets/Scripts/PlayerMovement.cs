@@ -243,17 +243,4 @@ public class PlayerMovement : MonoBehaviour
         isWallJumping = false;
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Ground"))
-            transform.parent = collision.transform;
-    }
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Ground"))
-            transform.parent = null;
-    }
-
-
 }
