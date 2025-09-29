@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour
     {
         progressAmount = 0;
         progressSlider.value = 0;
+
+        // Subscribe to the OnGemCollect event
         Gem.OnGemCollect += UpdateProgress;
     }
 
@@ -22,7 +24,8 @@ public class GameController : MonoBehaviour
 
         if (progressAmount >= 100)   
         {
-            Debug.Log("You Win!");
+            Destroy(GameObject.Find("Keycage"));
+            Debug.Log("Keycage destroyed");
         }
 
     }
