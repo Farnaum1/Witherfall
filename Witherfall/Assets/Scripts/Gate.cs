@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Gate : MonoBehaviour
@@ -8,6 +9,16 @@ public class Gate : MonoBehaviour
     private Animator animator;
     [SerializeField] bool KeyCheck;
     [SerializeField] bool IsPlayerCollided = false;
+
+    [Header("Door Lock")]
+    [SerializeField] GameObject lockedImage;
+    [SerializeField] GameObject unlockedImage;
+
+    [Header("Text")]
+    [SerializeField] TextMeshProUGUI holdTXT;
+
+    [Header("Key Icon HUD")]
+    [SerializeField] GameObject keyIcon;
 
 
     void Start()
@@ -18,6 +29,10 @@ public class Gate : MonoBehaviour
 
         // Get the Animator component
         animator = GetComponent<Animator>();
+
+        // Set the locked image active and unlocked image inactive at the start
+        lockedImage.SetActive(true);
+        unlockedImage.SetActive(false);
     }
 
     private void FixedUpdate()
@@ -34,7 +49,7 @@ public class Gate : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             IsPlayerCollided = true;
-
+            
         }
     }
 
@@ -43,6 +58,7 @@ public class Gate : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             IsPlayerCollided = false;
+            holdTXT.gameObject.SetActive(false);
         }
     }
 
@@ -50,9 +66,27 @@ public class Gate : MonoBehaviour
     {
         if (KeyCheck)
         {
-            if (IsPlayerCollided && Input.GetKey(KeyCode.E))
+            // If the player has the key, show the unlocked image and hide the locked image
+            unlockedImage.SetActive(true);
+            lockedImage.SetActive(false);
+
+            // Show the key icon on the HUD
+            keyIcon.SetActive(true);
+
+            if (IsPlayerCollided)
             {
-                animator.SetBool("isOpen", true);
+                // Show the hold E text when the player is near the door
+                holdTXT.gameObject.SetActive(true);
+
+                if (Input.GetKey(KeyCode.E))
+                {
+                    // Open the door when the player presses E
+                    animator.SetBool("isOpen", true);
+
+                    // Hide the key icon on the HUD
+                    keyIcon.SetActive(false);
+                }
+                
             }
         }
 

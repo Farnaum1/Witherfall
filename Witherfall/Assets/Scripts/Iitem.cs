@@ -4,5 +4,9 @@ using UnityEngine;
 
 public interface Iitem 
 {
-    public void Collect();
+    public void Collect() 
+    {
+        
+    }
+
 }
