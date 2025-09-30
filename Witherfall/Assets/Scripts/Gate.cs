@@ -6,21 +6,15 @@ public class Gate : MonoBehaviour
 {
     private Key key;
     private Animator animator;
-    private bool KeyCheck;
-
-    public bool IsPlayerCollided = false;
+    [SerializeField] bool KeyCheck;
+    [SerializeField] bool IsPlayerCollided = false;
 
 
     void Start()
     {
-        // Subscribe to the OnKeyCollect event
-        Key.OnKeyCollect += OpenDoor;
 
         // Find the script Key in the scene
         key = FindObjectOfType<Key>();
-
-        // Get the haskey boolean from the Key script
-        KeyCheck = key.hasKey;
 
         // Get the Animator component
         animator = GetComponent<Animator>();
@@ -28,6 +22,11 @@ public class Gate : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Get the haskey boolean from the Key script
+        KeyCheck = key.hasKey;
+
+        DoorCondition();
+
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -35,7 +34,7 @@ public class Gate : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             IsPlayerCollided = true;
-            //Debug.Log(IsPlayerCollided);
+
         }
     }
 
@@ -43,27 +42,22 @@ public class Gate : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            Debug.Log("Player is out of range of the door");
             IsPlayerCollided = false;
         }
     }
 
-    private void OpenDoor(bool KeyCheck)
-   
+    private void DoorCondition()
     {
         if (KeyCheck)
         {
-            Debug.Log(KeyCheck);
-
-            if (IsPlayerCollided)
+            if (IsPlayerCollided && Input.GetKey(KeyCode.E))
             {
-                Debug.Log("Door is opening");
                 animator.SetBool("isOpen", true);
-                Debug.Log("player is within range");
             }
         }
 
     }
+
 }
 
 

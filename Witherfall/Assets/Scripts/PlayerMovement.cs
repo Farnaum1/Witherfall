@@ -42,7 +42,6 @@ public class PlayerMovement : MonoBehaviour
     public float wallJumpDuration = 0.5f;
     private float wallJumpTimer;
 
-
     [Header("Flip")]
     private bool isFacingRight = true;
 
