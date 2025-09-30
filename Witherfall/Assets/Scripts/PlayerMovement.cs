@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Ground Check")]
     public Transform groundCheckPos;
-    public Vector2 groundCheckSize = new Vector2(0.5f, 0.5f);
+    public Vector2 groundCheckSize = new Vector2(0.5f, 0.05f);
     public LayerMask groundLayer;
     private bool isGrounded;
 
@@ -52,7 +52,6 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-
     void Start()
     {
         
@@ -60,7 +59,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-      
+        // Update animator parameters
+        animator.SetFloat("yVelocity", rb.velocity.y);
+        animator.SetFloat("magnitude", rb.velocity.magnitude);
+        animator.SetBool("isWallSliding", isWallSliding);
+
     }
 
     private void FixedUpdate()
@@ -79,10 +82,6 @@ public class PlayerMovement : MonoBehaviour
         SetWallSlide();
         SetWallJump();
 
-        // Update animator parameters
-        animator.SetFloat("yVelocity", rb.velocity.y);
-        animator.SetFloat("magnitude", rb.velocity.magnitude);
-        animator.SetBool("isWallSliding", isWallSliding);
     }
 
     private void OnDrawGizmosSelected()
@@ -126,7 +125,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 JumpFX.Play();
             }
-            
+
         }
 
         if (context.performed && wallJumpTimer > 0)
