@@ -8,7 +8,6 @@ using UnityEngine.InputSystem;
 
 public class HoldToLoad : MonoBehaviour
 {
-    [SerializeField] float holdDuration = 2f;
     [SerializeField] SpriteRenderer sr;
     private Animator animator;
     private Gate gate;
@@ -33,11 +32,9 @@ public class HoldToLoad : MonoBehaviour
     {
         // Check if the player is colliding with the gate
         isCollided = gate.IsPlayerCollided;
-        Debug.Log("isCollided: " + isCollided);
 
         // Check if the player has the key
         hasKey = gate.KeyCheck;
-        Debug.Log("hasKey: " + hasKey);
 
         // Check if the player is at the door and has the key
         if (isHolding && isCollided && hasKey)
@@ -45,7 +42,7 @@ public class HoldToLoad : MonoBehaviour
             sr.enabled = true;
             animator.SetTrigger("isHolding");
 
-            // Load next scene after holdDuration seconds
+            // Invoke the OnHoldComplete event after the animation duration (assuming 1 second here)
             OnHoldComplete.Invoke();
 
         }
