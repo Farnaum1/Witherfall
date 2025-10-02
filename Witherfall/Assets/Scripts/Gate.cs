@@ -7,8 +7,8 @@ public class Gate : MonoBehaviour
 {
     private Key key;
     private Animator animator;
-    [SerializeField] bool KeyCheck;
-    [SerializeField] bool IsPlayerCollided = false;
+    public bool KeyCheck;
+    public bool IsPlayerCollided = false;
 
     [Header("Door Lock")]
     [SerializeField] GameObject lockedImage;
