@@ -15,7 +15,7 @@ public class Gate : MonoBehaviour
     [SerializeField] GameObject unlockedImage;
 
     [Header("Text")]
-    [SerializeField] TextMeshProUGUI holdTXT;
+    [SerializeField] GameObject holdE;
 
     [Header("Key Icon HUD")]
     [SerializeField] GameObject keyIcon;
@@ -58,7 +58,7 @@ public class Gate : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             IsPlayerCollided = false;
-            holdTXT.gameObject.SetActive(false);
+            holdE.gameObject.SetActive(false);
         }
     }
 
@@ -76,7 +76,7 @@ public class Gate : MonoBehaviour
             if (IsPlayerCollided)
             {
                 // Show the hold E text when the player is near the door
-                holdTXT.gameObject.SetActive(true);
+                holdE.gameObject.SetActive(true);
 
                 if (Input.GetKey(KeyCode.E))
                 {
