@@ -16,7 +16,6 @@ public class ProgressPanel : MonoBehaviour
     private Vector2 sliderhandldePos;
 
 
-    // Start is called before the first frame update
     void Start()
     {
 
@@ -26,7 +25,6 @@ public class ProgressPanel : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         // Update the progress text if the value has changed

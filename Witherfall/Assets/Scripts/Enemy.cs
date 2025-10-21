@@ -22,6 +22,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] float gapRaycastDistance;
     [SerializeField] float platformRaycastDistance;
 
+    public int damage = 1;
+
 
 
     void Start()
