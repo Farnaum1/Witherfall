@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -6,6 +7,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public static event Action<ProjectileMovement ,Vector2> OnShoot;
+
     public Rigidbody2D rb;
     public Animator animator;
     public ParticleSystem dustBurstFX;
@@ -49,6 +52,13 @@ public class PlayerMovement : MonoBehaviour
     public float baseGravity = 2f;
     public float maxFallSpeed = 20f;
     public float fallMultiplier = 2f;
+
+    [Header("Player Shooting")]
+    public GameObject projectilePrefab;
+    [SerializeField] float spawnDistance = 1f;
+    [SerializeField] Transform firePoint;
+
+
 
 
 
@@ -148,6 +158,36 @@ public class PlayerMovement : MonoBehaviour
                 dustBurstFX.Play();
             }
         }
+
+    }
+
+    public void Shoot(InputAction.CallbackContext context)
+    {
+
+        if (context.performed && GameController.Instance.ConsumeProjectile())
+        {
+
+            Vector2 direction = isFacingRight ? Vector2.right : Vector2.left;
+
+            Vector3 spawnPos = firePoint != null
+                ? firePoint.position
+                : transform.position + (Vector3)(direction * spawnDistance);
+
+            GameObject proj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+            ProjectileMovement projectile = proj.GetComponent<ProjectileMovement>();
+
+            OnShoot?.Invoke(projectile ,direction);
+
+            Debug.Log("Bullets left: " + GameController.Instance.projectileAmount);
+
+        }
+
+        else if (context.canceled)
+        {
+            // What happens when we let the shoot button go
+        }
+
+
 
     }
 

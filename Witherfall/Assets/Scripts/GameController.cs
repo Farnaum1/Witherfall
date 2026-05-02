@@ -5,16 +5,35 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Runtime.CompilerServices;
+using System;
 
 public class GameController : MonoBehaviour
 {
+    //Singleton
+    public static GameController Instance { get; private set; }
+
+    public static event Action<int> OnAmmoChanged;
+
     public int progressAmount;
+    public int projectileAmount;
     public Slider progressSlider;
 
     public GameObject player;
 
     [SerializeField] private float loadDelay = 6f; // Delay before loading the next level
 
+    private void Awake()
+    {
+        //Singleton implementation
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
     void Start()
     {
         progressAmount = 0;
@@ -22,6 +41,7 @@ public class GameController : MonoBehaviour
 
         // Subscribe to the OnGemCollect event
         Gem.OnGemCollect += UpdateProgress;
+        SoulDust.OnSoulCollect += UpdateProjectile;
         HoldToLoad.OnHoldComplete += LoadNextLevel;
 
     }
@@ -38,6 +58,27 @@ public class GameController : MonoBehaviour
             Destroy(GameObject.Find("Keycage"));
         }
 
+    }
+
+    private void UpdateProjectile(int amount)
+    {
+        projectileAmount += amount;
+        OnAmmoChanged?.Invoke(projectileAmount);
+
+        Debug.Log(amount);
+    }
+
+    public bool ConsumeProjectile()
+    {
+        if (projectileAmount <=0)
+        {
+            Debug.Log("No bullets");
+            return false;
+        }
+
+        projectileAmount--;
+        OnAmmoChanged?.Invoke(projectileAmount);
+        return true;
     }
 
     private void LoadNextLevel()

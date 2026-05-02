@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class PlayerHealth : MonoBehaviour
     public HealthUI healthUI;
 
     [SerializeField] Light2D playerLight;
+
+    [SerializeField] float slowMotionStrength = 0.2f;
+    [SerializeField] float deathSequenceDelay = 1.5f;
+    [SerializeField] float deathFlashDuration = 5f;
 
     void Start()
     {
@@ -43,16 +48,34 @@ public class PlayerHealth : MonoBehaviour
         healthUI.UpdateHearts(currentHealth);
 
         // Flash red effect
-        StartCoroutine(FlashRed());
+        StartCoroutine(FlashRed(0.2f));
 
         if (currentHealth <= 0)
         {
             // Handle player death (e.g., reload scene, show game over screen, etc.)
-            Debug.Log("Player has died!");
+
+            StartCoroutine(DeathSequence());
+
         }
     }
 
-    private IEnumerator FlashRed()
+    IEnumerator DeathSequence()
+    {
+        // Slow down time 
+        Time.timeScale = slowMotionStrength;
+
+        yield return new WaitForSecondsRealtime(deathSequenceDelay);
+
+        yield return StartCoroutine(FlashRed(deathFlashDuration));
+
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        
+    }
+
+    private IEnumerator FlashRed(float delay)
     {
         // Flash the sprite red for a brief moment
         Color spriteOriginalColor = spriteRenderer.color;
@@ -62,7 +85,7 @@ public class PlayerHealth : MonoBehaviour
         playerLight.color = Color.red;
         playerLight.intensity = 1.5f;
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSecondsRealtime(delay);
         spriteRenderer.color = spriteOriginalColor;
         playerLight.color = glowOriginalColor;
         playerLight.intensity = 1f;

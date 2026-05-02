@@ -11,10 +11,13 @@ public class Enemy : MonoBehaviour
     [SerializeField] float chaseSpeed;
     [SerializeField] float jumpForce;
     [SerializeField] LayerMask groundLayer;
+    [SerializeField] GameObject headHitbox;
+    [SerializeField] BoxCollider2D headCollider;
 
     private Rigidbody2D enemyRb;
     private bool isGrounded;
     private bool shouldJump;
+    private Vector2 directionToPlayer;
 
     private Animator animator;
 
@@ -39,30 +42,27 @@ public class Enemy : MonoBehaviour
         animator.SetFloat("EnemyVelocity", Mathf.Abs(enemyRb.velocity.x));
         animator.SetBool("IsGrounded", isGrounded);
 
-
-
         // Check if the enemy is grounded
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.7f, groundLayer);
 
         // Direction of enemy to player
-        float diretionToPlayer = player.position.x - transform.position.x;
+        directionToPlayer = (player.position - transform.position).normalized;
 
         // Check if player is above enemy
         bool isPlayerAbove = Physics2D.Raycast(transform.position, Vector2.up, 3f, LayerMask.GetMask("Player"));
 
         if (isGrounded)
         {
-            // Move the enemy left and right
-            enemyRb.velocity = new Vector2(diretionToPlayer * chaseSpeed, enemyRb.velocity.y);
+            MoveEnemy();
 
             // Jump if there's gap ahead && no grounds infront
             // Else if there's player above and platform above
 
             // Check for ground in front of enemy
-            RaycastHit2D groundInfront = Physics2D.Raycast(transform.position, new Vector2(diretionToPlayer, 0), groundRaycastDistance, groundLayer);
+            RaycastHit2D groundInfront = Physics2D.Raycast(transform.position, new Vector2(directionToPlayer.x, 0), groundRaycastDistance, groundLayer);
 
             // Check for gap in front of enemy
-            RaycastHit2D gapInfront = Physics2D.Raycast(transform.position + new Vector3(diretionToPlayer, 0, 0), Vector2.down, gapRaycastDistance, groundLayer);
+            RaycastHit2D gapInfront = Physics2D.Raycast(transform.position + new Vector3(directionToPlayer.x, 0, 0), Vector2.down, gapRaycastDistance, groundLayer);
 
             // Check for platform above enemy
             RaycastHit2D platformAbove = Physics2D.Raycast(transform.position, Vector2.up, platformRaycastDistance, groundLayer);
@@ -98,6 +98,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void MoveEnemy()
+    {
+        // Move the enemy left and right
+        enemyRb.velocity = new Vector2(directionToPlayer.x * chaseSpeed, enemyRb.velocity.y);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider == headCollider && collision.gameObject.CompareTag("Player"))
+        {
+            Destroy(gameObject);
+        }
+    }
 
 }
 
