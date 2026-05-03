@@ -20,7 +20,7 @@ public class GameController : MonoBehaviour
 
     public GameObject player;
 
-    [SerializeField] private float loadDelay = 6f; // Delay before loading the next level
+    [SerializeField] private float loadDelay = 6f; 
 
     private void Awake()
     {
@@ -33,6 +33,7 @@ public class GameController : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
     void Start()
     {
@@ -64,8 +65,6 @@ public class GameController : MonoBehaviour
     {
         projectileAmount += amount;
         OnAmmoChanged?.Invoke(projectileAmount);
-
-        Debug.Log(amount);
     }
 
     public bool ConsumeProjectile()
@@ -87,6 +86,11 @@ public class GameController : MonoBehaviour
         StartCoroutine(LoadNextLevelWithDelay());
     }
 
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        projectileAmount = 0;
+        OnAmmoChanged?.Invoke(projectileAmount);
+    }
 
     private IEnumerator LoadNextLevelWithDelay()
     {

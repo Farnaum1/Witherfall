@@ -11,8 +11,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float chaseSpeed;
     [SerializeField] float jumpForce;
     [SerializeField] LayerMask groundLayer;
-    [SerializeField] GameObject headHitbox;
-    [SerializeField] BoxCollider2D headCollider;
+    [SerializeField] private GameObject deathFXPrefab;
 
     private Rigidbody2D enemyRb;
     private bool isGrounded;
@@ -104,12 +103,11 @@ public class Enemy : MonoBehaviour
         enemyRb.velocity = new Vector2(directionToPlayer.x * chaseSpeed, enemyRb.velocity.y);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void Die()
     {
-        if (collision.collider == headCollider && collision.gameObject.CompareTag("Player"))
-        {
-            Destroy(gameObject);
-        }
+        Instantiate(deathFXPrefab, transform.position, Quaternion.identity);
+
+        Destroy(gameObject);
     }
 
 }

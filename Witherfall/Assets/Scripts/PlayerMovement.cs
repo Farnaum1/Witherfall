@@ -178,8 +178,6 @@ public class PlayerMovement : MonoBehaviour
 
             OnShoot?.Invoke(projectile ,direction);
 
-            Debug.Log("Bullets left: " + GameController.Instance.projectileAmount);
-
         }
 
         else if (context.canceled)

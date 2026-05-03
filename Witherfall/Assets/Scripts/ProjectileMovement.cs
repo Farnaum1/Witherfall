@@ -11,6 +11,9 @@ public class ProjectileMovement : MonoBehaviour
     [Header("Spin")]
     [SerializeField] float spinDegreesPerSecond = 720f;
 
+    [Header("ParticleFx")]
+    public ParticleSystem soulCrushFX;
+
     public Vector2 direction;
 
     void OnEnable()
@@ -59,10 +62,22 @@ public class ProjectileMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Enemy enemy = other.GetComponent<Enemy>();
+
         // Check if the other's layer is one of the layers in destroyLayers
         if ((destroyLayers.value & (1 << other.gameObject.layer)) != 0)
         {
+            Instantiate(soulCrushFX, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
+
+        if (other.CompareTag("Enemy") && enemy != null)
+        {
+            enemy.Die();
+            Destroy(gameObject);
+
+        }
     }
+
+
 }

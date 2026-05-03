@@ -18,6 +18,13 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] float deathSequenceDelay = 1.5f;
     [SerializeField] float deathFlashDuration = 5f;
 
+    [Header("IFrame")]
+    [SerializeField] private float invincibilityDuration = 0.5f;
+    private bool isInvincible = false;
+
+    [Header("CameraShake")]
+    [SerializeField] CameraShake cameraShake;
+
     void Start()
     {
         // Set current health to max health at the start
@@ -35,11 +42,20 @@ public class PlayerHealth : MonoBehaviour
         // Instantiate enemy component from the collided object
         Enemy enemy = collision.GetComponent<Enemy>();
 
-        if (enemy)
+        if (enemy && !isInvincible)
         {
             TakeDamage(enemy.damage);
         }
             
+    }
+
+    IEnumerator InvincibilityFrames()
+    {
+        isInvincible = true;
+
+        yield return new WaitForSeconds(invincibilityDuration);
+
+        isInvincible = false;
     }
 
     private void TakeDamage(int damage)
@@ -50,6 +66,10 @@ public class PlayerHealth : MonoBehaviour
         // Flash red effect
         StartCoroutine(FlashRed(0.2f));
 
+        cameraShake.Shake();
+
+        StartCoroutine(InvincibilityFrames());
+
         if (currentHealth <= 0)
         {
             // Handle player death (e.g., reload scene, show game over screen, etc.)
@@ -59,6 +79,7 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    
     IEnumerator DeathSequence()
     {
         // Slow down time 
