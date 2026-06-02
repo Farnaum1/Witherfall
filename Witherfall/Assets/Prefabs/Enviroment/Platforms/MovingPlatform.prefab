@@ -32,7 +32,7 @@ Transform:
   - {fileID: 5025786076103161722}
   - {fileID: 5025786075167596638}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5025786075167596637
 GameObject:
@@ -221,7 +221,7 @@ PlatformEffector2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5025786075954553650}
-  m_Enabled: 0
+  m_Enabled: 1
   m_UseColliderMask: 1
   m_ColliderMask:
     serializedVersion: 2
@@ -295,7 +295,7 @@ MonoBehaviour:
   - {x: 2.5219202, y: -0.26540285, z: 0}
   m_ShapePathHash: 884139589
   m_Mesh: {fileID: 0}
-  m_InstanceId: 131498
+  m_InstanceId: 110426
 --- !u!1 &5025786075960175209
 GameObject:
   m_ObjectHideFlags: 0

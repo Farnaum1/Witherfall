@@ -15,6 +15,15 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem jumpFX;
     public ParticleSystem dashFX;
 
+    [Header("Player Sound Effects")]
+    [SerializeField] float jumpSfxVolume;
+    [SerializeField] float jumpSfxMinPitch;
+    [SerializeField] float jumpSfxMaxPitch;
+    [SerializeField] float landSfxVolume;
+    [SerializeField] float landSfxMinPitch;
+    [SerializeField] float landSfxMaxPitch;
+
+
     [Header("Movement")]
     public float moveSpeed = 5f;
     private float horizontalMovement;
@@ -29,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 10f;
     public int maxJumps = 2;
     private int jumpsRemaining;
+
 
     [Header("Jump Buffer")]
     [SerializeField] private float jumpBufferTime = 0.12f;
@@ -267,6 +277,8 @@ public class PlayerMovement : MonoBehaviour
 
                 animator.SetTrigger("jump");
                 dustBurstFX.Play();
+                AudioManager.Instance.PlaySFX(AudioManager.Instance.playerWallJump,
+                    jumpSfxVolume);
 
                 // prevent wall stick re-trigger
                 CancelInvoke(nameof(CancelWallJump));
@@ -285,6 +297,8 @@ public class PlayerMovement : MonoBehaviour
 
                 if (jumpsRemaining == 0)
                     jumpFX.Play();
+                    AudioManager.Instance.PlaySFXRandomPitch(AudioManager.Instance.playerDoubleJump,
+                       jumpSfxVolume, jumpSfxMinPitch, jumpSfxMaxPitch );
 
                 return;
             }
@@ -324,6 +338,7 @@ public class PlayerMovement : MonoBehaviour
             jumpBufferCounter = 0f;
 
             animator.SetTrigger("jump");
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.playerJump);
 
             if (jumpsRemaining == 0)
                 jumpFX.Play();
@@ -516,12 +531,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void GroundCheck()
     {
-        if (Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0f, groundLayer))
+        bool isMovingUp = rb.velocity.y > 0.1f;
+
+        if (Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize,
+            0f, groundLayer) && !isMovingUp)
         {
             if (!isGrounded)
             {
                 jumpsRemaining = maxJumps;
                 groundedRemember = groundedRememberTime;
+                AudioManager.Instance.PlaySFXRandomPitch(AudioManager.Instance.playerLand,landSfxVolume, landSfxMinPitch, landSfxMaxPitch);
             }
 
             //isGrounded = true;

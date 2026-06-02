@@ -7,6 +7,9 @@ public class Destructable : MonoBehaviour
     [SerializeField] private int health = 1;
     [SerializeField] private GameObject destructionFX;
 
+    [Header("Destruction Sound Effects")]
+    [SerializeField] float SfxVolume;
+
     public void TakeDamage(int damage)
     {
         health -= damage;
@@ -21,6 +24,7 @@ public class Destructable : MonoBehaviour
         if (destructionFX != null)
         {
             Instantiate(destructionFX, transform.position, transform.rotation);
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.brickBreak, SfxVolume);
         }
         Destroy(gameObject);
     }

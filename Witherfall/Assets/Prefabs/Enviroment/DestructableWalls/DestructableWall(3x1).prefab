@@ -638,6 +638,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   destructionFX: {fileID: 3189037551827873665, guid: 348d0e08794d1cb45a239c440de5ad85, type: 3}
+  SfxVolume: 0.6
 --- !u!61 &2065089374938180557
 BoxCollider2D:
   m_ObjectHideFlags: 0

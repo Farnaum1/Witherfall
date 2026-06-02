@@ -8,6 +8,14 @@ public class ProjectileMovement : MonoBehaviour
     [SerializeField] float lifetime = 3f;
     [SerializeField] LayerMask destroyLayers;
 
+    [Header("Sound Effects")]
+    [SerializeField] float shardSFXVolume = 0.9f;
+    [SerializeField] float shardSFXMinPitch;
+    [SerializeField] float shardSFXMaxPitch;
+    [SerializeField] float swooshSFXVolume;
+    [SerializeField] float swooshSFXMinPitch;
+    [SerializeField] float swooshSFXMaxPitch;
+
     [Header("Spin")]
     [SerializeField] float spinDegreesPerSecond = 720f;
 
@@ -24,6 +32,11 @@ public class ProjectileMovement : MonoBehaviour
     void OnDisable()
     {
         PlayerMovement.OnShoot -= ReceiveShot;
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopSFXLoop();
+        }
     }
 
     public void ReceiveShot(ProjectileMovement proj ,Vector2 dir)
@@ -35,6 +48,7 @@ public class ProjectileMovement : MonoBehaviour
 
     void Start()
     {
+        AudioManager.Instance.PlaySFXLoop(AudioManager.Instance.projectileSwoosh, swooshSFXVolume, swooshSFXMinPitch, swooshSFXMaxPitch);
         Destroy(gameObject, lifetime);
     }
 
@@ -70,6 +84,8 @@ public class ProjectileMovement : MonoBehaviour
         if ((destroyLayers.value & (1 << other.gameObject.layer)) != 0)
         {
             Instantiate(soulCrushFX, transform.position, Quaternion.identity);
+            AudioManager.Instance.PlaySFXRandomPitch(AudioManager.Instance.brickHit,
+                shardSFXVolume ,shardSFXMinPitch, shardSFXMaxPitch );
             Destroy(gameObject);
         }
 
@@ -83,6 +99,7 @@ public class ProjectileMovement : MonoBehaviour
         if (other.CompareTag("Destructable") && destructable != null)
         {
             destructable.TakeDamage(1);
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.brickHit);
             Destroy(gameObject);
 
         }

@@ -7,6 +7,7 @@ public class CameraZoneSwitcher : MonoBehaviour
 {
     [SerializeField] private CinemachineVirtualCamera mainCamera;
     [SerializeField] private CinemachineVirtualCamera secretCamera;
+    [SerializeField] private float musicFadeTime = 1f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -15,6 +16,12 @@ public class CameraZoneSwitcher : MonoBehaviour
             // Switch priority to make the secret camera the active one
             mainCamera.Priority = 0;
             secretCamera.Priority = 10;
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayMusicWithFade(AudioManager.Instance.secretAreaMusic,
+                    musicFadeTime);
+            }
         }
     }
 
@@ -25,6 +32,9 @@ public class CameraZoneSwitcher : MonoBehaviour
             // Switch priority back
             mainCamera.Priority = 10;
             secretCamera.Priority = 0;
+
+            AudioManager.Instance.PlayMusicWithFade(AudioManager.Instance.mainMusic,
+                    musicFadeTime);
         }
     }
 }

@@ -26,6 +26,11 @@ public class PlayerHealth : MonoBehaviour
     [Header("CameraShake")]
     [SerializeField] CameraShake cameraShake;
 
+    [Header("Sound Effects")]
+    [SerializeField] float hurtSfxVolume = 0.5f;
+    [SerializeField] float hurtSfxMinPitch;
+    [SerializeField] float hurtSfxMaxPitch;
+
 
     void Start()
     {
@@ -85,6 +90,9 @@ public class PlayerHealth : MonoBehaviour
         cameraShake.Shake();
 
         StartCoroutine(InvincibilityFrames());
+
+        AudioManager.Instance.PlaySFXRandomPitch(AudioManager.Instance.playerDoubleJump,
+                       hurtSfxVolume, hurtSfxMinPitch, hurtSfxMaxPitch);
 
         if (currentHealth <= 0)
         {
